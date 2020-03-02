@@ -7,10 +7,15 @@ ARG COQ_VERSION
 
 RUN apt-get update \
  && apt-get install -y \
+    autoconf \
+    bison \
     curl \
+    cvc4 \
     darcs \
+    flex \
     g++ \
     gcc \
+    git \
     libgmp-dev \
     m4 \
     make \
@@ -22,11 +27,21 @@ RUN apt-get update \
     unzip
 
 ADD opam-${OPAM_VERSION}-x86_64-linux.sha256 /tmp/
+ADD veriT9f48a98.tar.gz /tmp/
 
 RUN curl -sSLo /usr/local/bin/opam \
   https://github.com/ocaml/opam/releases/download/${OPAM_VERSION}/opam-${OPAM_VERSION}-x86_64-linux \
  && chmod +x /usr/local/bin/opam \
- && sha256sum -c /tmp/opam-${OPAM_VERSION}-x86_64-linux.sha256
+ && sha256sum -c /tmp/opam-${OPAM_VERSION}-x86_64-linux.sha256 \
+ && cd /tmp/veriT9f48a98 \
+ && autoconf \
+ && ./configure \
+ && make \
+ && mv veriT /usr/local/bin/ \
+ && mv veriT-SAT /usr/local/bin/ \
+ && cd / \
+ && rm /tmp/opam-${OPAM_VERSION}-x86_64-linux.sha256 \
+ && rm -rf /tmp/veriT9f48a98*
 
 RUN useradd \
     --create-home \
@@ -42,11 +57,14 @@ ENV HOME /home/coquser
 RUN opam init -y \
     --disable-sandboxing \
     --compiler=4.09.0 \
-    --dot-profile=${HOME}/.profile \
+    --dot-profile=${HOME}/.bashrc \
     --shell-setup \
     --enable-completion \
  && opam update \
- && opam install -y coq=${COQ_VERSION}
+ && opam repo add coq-released https://coq.inria.fr/opam/released \
+ && opam repo add coq-extra-dev https://coq.inria.fr/opam/extra-dev \
+ && opam install -y \
+    coq=${COQ_VERSION} \
+    coq-smtcoq
 
-USER coquser
 WORKDIR /home/coquser/workspace

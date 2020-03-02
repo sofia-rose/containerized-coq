@@ -2,7 +2,7 @@
 
 set -eu
 
-export COQ_VERSION=8.11.0
+export COQ_VERSION=8.9.0
 export OPAM_VERSION=2.0.6
 export USER_ID=`id -u`
 export GROUP_ID=`id -g`
@@ -21,4 +21,4 @@ docker run \
   --rm \
   --volume $PWD/workspace:/home/coquser/workspace \
   coq:${COQ_VERSION} \
-  /bin/bash -l
+  /bin/bash
