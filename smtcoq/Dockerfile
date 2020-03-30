@@ -20,7 +20,7 @@ RUN cd $HOME/tmp/veriT9f48a98 \
   && make \
   && sudo mv veriT /usr/local/bin/ \
   && sudo mv veriT-SAT /usr/local/bin/ \
-  && sudo rm -rf $HOME/tmp/veriT9f48a98
+  && sudo rm -rf $HOME/tmp
 
 RUN opam pin -y add coq ${COQ_VERSION} \
  && opam install -y coq-smtcoq
